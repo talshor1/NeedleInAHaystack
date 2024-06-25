@@ -2,5 +2,5 @@
   "numberOfThreads": 4,
   "inputFolderPath": "./csvs2",
   "indexFolderPath": "./indexes",
-  "numberOfIndexFiles": 100
+  "numberOfIndexFiles": 20
 }

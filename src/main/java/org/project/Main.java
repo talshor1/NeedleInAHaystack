@@ -10,11 +10,16 @@ import javax.swing.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import static org.project.utils.utils.deleteFolderContents;
+import static org.project.utils.utils.isFolderNotEmpty;
+
 public class Main {
     public static void main(String[] args) {
-        String selectedField = "";
         BlockingQueue<String> selectionQueue = new ArrayBlockingQueue<>(1);
+        String selectedField = "";
         AppConfig config = null;
+        boolean stop  = false;
+        boolean isIndexInitialized;
 
         try {
             config = new AppConfig("config.json");
@@ -23,18 +28,39 @@ public class Main {
             System.exit(1);
         }
 
+        isIndexInitialized = isFolderNotEmpty(config.getIndexFolderPath());
+
         SwingUtilities.invokeLater(() -> new GUI(selectionQueue));
 
-        try {
-            selectedField = selectionQueue.take();
-            System.out.println("Selected field: " + selectedField);
-        } catch (InterruptedException e) {
-            System.exit(1);
+        while (!stop) {
+            try {
+                String result = selectionQueue.take();
+                if (result.equals("CLEANTHEINDEXES")){
+                    deleteFolderContents(config.getIndexFolderPath());
+                    continue;
+                }
+                if (result.startsWith("QUERY")) {
+                    if (!isIndexInitialized){
+                        System.out.println("First initialize a index");
+                        continue;
+                    }
+                    result = result.substring(5);
+                    System.out.println("Running query: " + "SELECT * FROM Customers WHERE " + selectedField + " = '" + result + "'");
+                    stop = true;
+                } else {
+                    selectedField = result;
+                    System.out.println("Selected field: " + selectedField);
+                    Index index = new Index();
+                    Manager m = new Manager(config.getFolderPath(), utils.cleanFieldName(result), config.getNumberOfThreads(), index);
+                    m.createIndexFile();
+                    index.outputToMultipleFiles(config.getIndexFolderPath(), config.getNumberOfIndexFiles());
+                    index.createMetadataFile(config.getIndexFolderPath(), config.getNumberOfIndexFiles());
+                    isIndexInitialized = true;
+                }
+            } catch (InterruptedException e) {
+                System.exit(1);
+            }
         }
-
-        Index index = new Index();
-        Manager m = new Manager(config.getFolderPath(), utils.cleanFieldName(selectedField), config.getNumberOfThreads(), index);
-        m.createIndexFile();
-        index.outputToMultipleFiles(config.getIndexFolderPath());
+        System.exit(0);
     }
 }

@@ -1,12 +1,9 @@
 package org.project.index;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonWriter;
+import javax.json.*;
 import java.io.FileWriter;
 
 public class Index {
@@ -33,9 +30,8 @@ public class Index {
         this.indexMap = new TreeMap<>(indexMap);
     }
 
-    public void outputToMultipleFiles(String directoryPath) {
+    public void outputToMultipleFiles(String directoryPath, int numFiles) {
         sort();
-        int numFiles = 20;
         int entriesPerFile = (int) Math.ceil((double) indexMap.size() / numFiles);
         Iterator<Map.Entry<String, List<String>>> iterator = indexMap.entrySet().iterator();
 
@@ -76,6 +72,40 @@ public class Index {
             } catch (IOException e) {
                 System.exit(1);
             }
+        }
+    }
+
+    public void createMetadataFile(String directoryPath, int numFiles) {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+
+        for (int i = 0; i < numFiles; i++) {
+            String filePath = String.format("%s/index_%02d.json", directoryPath, i);
+
+            try (JsonReader jsonReader = Json.createReader(new FileReader(filePath))) {
+                JsonObject jsonObject = jsonReader.readObject();
+                String minValue = jsonObject.getString("minValue");
+                String maxValue = jsonObject.getString("maxValue");
+
+                JsonObjectBuilder jsonBuilder = Json.createObjectBuilder()
+                        .add("filename", String.format("index_%02d.json", i))
+                        .add("minValue", minValue)
+                        .add("maxValue", maxValue);
+                arrayBuilder.add(jsonBuilder.build());
+            } catch (IOException e) {
+                System.out.println(e);
+                System.exit(1);
+            }
+        }
+
+        JsonObject metadata = Json.createObjectBuilder()
+                .add("files", arrayBuilder.build())
+                .build();
+
+        try (JsonWriter jsonWriter = Json.createWriter(new FileWriter(directoryPath + "/metadata.json"))) {
+            jsonWriter.writeObject(metadata);
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(1);
         }
     }
 }
