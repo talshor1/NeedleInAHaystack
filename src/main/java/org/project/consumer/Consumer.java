@@ -1,6 +1,6 @@
 package org.project.consumer;
 
-import org.project.costumer.Customer;
+import org.project.customer.Customer;
 import org.project.index.Index;
 
 import java.lang.reflect.Field;
@@ -30,7 +30,7 @@ public class Consumer {
 
     private void waitForQueue() {
         try{
-            sleep(2000);
+            sleep(1000);
         } catch (InterruptedException e) {
             System.exit(1);
         }

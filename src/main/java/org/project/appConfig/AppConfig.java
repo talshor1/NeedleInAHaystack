@@ -10,6 +10,8 @@ public class AppConfig {
     private String inputFolderPath;
     private String indexFolderPath;
     private int numberOfIndexFiles;
+    private int width;
+    private int height;
 
     public AppConfig (String filePath) {
         try (InputStream inputStream = AppConfig.class.getClassLoader().getResourceAsStream(filePath)) {
@@ -25,6 +27,8 @@ public class AppConfig {
             this.setInputFolderPath(jsonObject.getString("inputFolderPath"));
             this.setIndexFolderPath(jsonObject.getString("indexFolderPath"));
             this.setNumberOfIndexFiles(jsonObject.getInt("numberOfIndexFiles"));
+            this.setHeight(jsonObject.getInt("height"));
+            this.setWidth(jsonObject.getInt("width"));
         } catch (Exception e) {
             System.exit(1);
         }
@@ -54,21 +58,27 @@ public class AppConfig {
         this.numberOfIndexFiles = numberOfIndexFiles;
     }
 
-    @Override
-    public String toString() {
-        return "AppConfig{" +
-                "numberOfThreads=" + numberOfThreads +
-                ", inputFolderPath='" + inputFolderPath + '\'' +
-                ", numberOfIndexFiles=" + numberOfIndexFiles + '\'' +
-                ", indexFolderPath=" + indexFolderPath +
-                '}';
-    }
-
     public String getIndexFolderPath() {
         return indexFolderPath;
     }
 
     public void setIndexFolderPath(String indexFolderPath) {
         this.indexFolderPath = indexFolderPath;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

@@ -1,6 +1,10 @@
 package org.project.utils;
 
+import org.project.customer.Customer;
+
 import java.io.File;
+import java.util.List;
+import java.util.Objects;
 
 public class utils {
     public static String cleanFieldName(String field){
@@ -49,5 +53,22 @@ public class utils {
             }
         }
         fileOrFolder.delete();
+    }
+
+    public static String getCustomersString(List<Customer> customers){
+        String customersUI = "";
+        if (customers == null || customers.isEmpty()){
+            return customersUI;
+        }
+        for (Customer c : customers){
+            customersUI += c;
+            customersUI += "\n";
+        }
+        return customersUI;
+    }
+
+    public static int getNumberOfIndexFilesWritten(String indexDir) {
+        File directory = new File(indexDir);
+        return Objects.requireNonNull(directory.listFiles()).length;
     }
 }

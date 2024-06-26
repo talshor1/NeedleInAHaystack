@@ -4,20 +4,20 @@ import java.util.List;
 import java.util.concurrent.*;
 
 import org.project.consumer.Consumer;
-import org.project.costumer.Customer;
+import org.project.customer.Customer;
 import org.project.csv.CSVParser;
 import org.project.files.FilesDetails;
 import org.project.index.Index;
 
 public class ThreadPoolManager {
-    private int numberOfThreads;
-    private FilesDetails filesDetails;
-    private ExecutorService executorService;
-    private BlockingQueue<Customer> blockingQueue;
-    private String fieldName;
+    private final int numberOfThreads;
+    private final FilesDetails filesDetails;
+    private final ExecutorService executorService;
+    private final BlockingQueue<Customer> blockingQueue;
+    private final String fieldName;
     private final Index index;
 
-    public ThreadPoolManager(int numberOfThreads, FilesDetails filesDetails, String fieldName, Index index ) {
+    public ThreadPoolManager(int numberOfThreads, FilesDetails filesDetails, String fieldName, Index index) {
         this.numberOfThreads = numberOfThreads;
         this.filesDetails = filesDetails;
         this.executorService = Executors.newFixedThreadPool(numberOfThreads);
@@ -41,6 +41,7 @@ public class ThreadPoolManager {
         }
 
         if (remainingFiles > 0) {
+            System.out.println("Remaining files: " + remainingFiles);
             int endIndex = startIndex + remainingFiles;
             List<String> filesForThread = filesDetails.getFilesList().subList(startIndex, endIndex);
             CSVParser parser = new CSVParser(filesForThread, blockingQueue, parserNumber);

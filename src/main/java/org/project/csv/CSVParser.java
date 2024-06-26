@@ -7,7 +7,8 @@ import java.util.concurrent.BlockingQueue;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import org.project.costumer.Customer;
+import org.project.customer.Customer;
+import org.project.state.AppState;
 
 public class CSVParser {
     private final List<String> fileNames;

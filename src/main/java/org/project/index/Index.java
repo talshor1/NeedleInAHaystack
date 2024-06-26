@@ -1,5 +1,7 @@
 package org.project.index;
 
+import org.project.state.AppState;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -70,6 +72,7 @@ public class Index {
             try (JsonWriter jsonWriter = Json.createWriter(new FileWriter(filePath))) {
                 jsonWriter.writeObject(jsonObject);
             } catch (IOException e) {
+                System.out.println(e);
                 System.exit(1);
             }
         }
@@ -92,7 +95,7 @@ public class Index {
                         .add("maxValue", maxValue);
                 arrayBuilder.add(jsonBuilder.build());
             } catch (IOException e) {
-                System.out.println(e);
+                System.out.println("Exception in createMetadataFile 1");
                 System.exit(1);
             }
         }
@@ -104,7 +107,7 @@ public class Index {
         try (JsonWriter jsonWriter = Json.createWriter(new FileWriter(directoryPath + "/metadata.json"))) {
             jsonWriter.writeObject(metadata);
         } catch (IOException e) {
-            System.out.println(e);
+            System.out.println("Exception in createMetadataFile 2");
             System.exit(1);
         }
     }

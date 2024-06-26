@@ -1,6 +1,8 @@
 {
-  "numberOfThreads": 4,
-  "inputFolderPath": "./csvs2",
+  "numberOfThreads": 6,
+  "inputFolderPath": "./csvs",
   "indexFolderPath": "./indexes",
-  "numberOfIndexFiles": 20
+  "numberOfIndexFiles": 1000,
+  "width": 1000,
+  "height":600
 }
