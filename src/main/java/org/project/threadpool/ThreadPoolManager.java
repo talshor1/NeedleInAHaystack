@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 import org.project.consumer.Consumer;
-import org.project.costumer.Customer;
+import org.project.customer.Customer;
 import org.project.csv.CSVParser;
 import org.project.files.FilesDetails;
 import org.project.index.Index;

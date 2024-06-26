@@ -10,6 +10,7 @@ public class AppConfig {
     private String inputFolderPath;
     private String indexFolderPath;
     private int numberOfIndexFiles;
+    private boolean stop;
 
     public AppConfig (String filePath) {
         try (InputStream inputStream = AppConfig.class.getClassLoader().getResourceAsStream(filePath)) {
@@ -17,6 +18,7 @@ public class AppConfig {
                 throw new IllegalArgumentException("File not found: " + filePath);
             }
 
+            stop = false;
             Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8);
             String jsonText = scanner.useDelimiter("\\A").next();
             JSONObject jsonObject = new JSONObject(jsonText);
@@ -70,5 +72,13 @@ public class AppConfig {
 
     public void setIndexFolderPath(String indexFolderPath) {
         this.indexFolderPath = indexFolderPath;
+    }
+
+    public boolean shouldStop() {
+        return this.stop;
+    }
+
+    public void setStop() {
+        this.stop = true;
     }
 }

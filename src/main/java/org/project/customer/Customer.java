@@ -1,4 +1,4 @@
-package org.project.costumer;
+package org.project.customer;
 
 public class Customer {
     String fileName;
@@ -30,12 +30,23 @@ public class Customer {
         this.website = website;
     }
 
-    public String getFileName(){
-        return this.fileName;
+    public Customer(String fileName, String[] data) {
+        this.fileName = fileName;
+        this.customerid = data[1];
+        this.firstname = data[2];
+        this.lastname = data[3];
+        this.company = data[4];
+        this.city = data[5];
+        this.country = data[6];
+        this.phone1 = data[7];
+        this.phone2 = data[8];
+        this.email = data[9];
+        this.subscriptiondate = data[10];
+        this.website = data[11];
     }
 
-    public String getCustomerid(){
-        return this.customerid;
+    public String getFileName(){
+        return this.fileName;
     }
 
     @Override

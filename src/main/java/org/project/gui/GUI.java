@@ -1,8 +1,15 @@
 package org.project.gui;
 
+import org.project.appConfig.AppConfig;
+import org.project.customer.Customer;
+import org.project.manager.Manager;
+import org.project.utils.utils;
+
 import javax.swing.*;
 import java.awt.*;
-import java.util.concurrent.BlockingQueue;
+import java.util.List;
+
+import static org.project.utils.utils.isFolderNotEmpty;
 
 public class GUI {
 
@@ -10,19 +17,18 @@ public class GUI {
     private final JComboBox<String> fieldComboBox;
     private final JTextField userInputField;
     private String selectedField;
-    private String userInput;
+    private final String[] fields = {
+            "Customer Id", "First Name", "Last Name", "Company", "City", "Country",
+            "Phone1", "Phone2", "Email", "Subscription Date", "Website"
+    };
 
-    public GUI(BlockingQueue<String> selectionQueue) {
+    public GUI(AppConfig config) {
 
         frame = new JFrame("Select Field and Run Query");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 200);
+        frame.setSize(800, 400);
         frame.setLayout(new BorderLayout());
 
-        String[] fields = {
-                "Customer Id", "First Name", "Last Name", "Company", "City", "Country",
-                "Phone1", "Phone2", "Email", "Subscription Date", "Website"
-        };
         fieldComboBox = new JComboBox<>(fields);
         frame.add(fieldComboBox, BorderLayout.NORTH);
 
@@ -41,42 +47,45 @@ public class GUI {
         JButton deleteIndexButton = new JButton("Delete Index");
         buttonPanel.add(deleteIndexButton);
 
+        JButton closeButton = new JButton("Close");
+        buttonPanel.add(closeButton);
+
         frame.add(buttonPanel, BorderLayout.SOUTH);
 
         fieldComboBox.addActionListener(e -> {
             selectedField = (String) fieldComboBox.getSelectedItem();
         });
 
-        userInputField.addActionListener(e -> {
-            userInput = userInputField.getText();
+        closeButton.addActionListener(e -> {
+            config.setStop();
         });
 
         indexButton.addActionListener(e -> {
-            selectedField = (String) fieldComboBox.getSelectedItem();
-            JOptionPane.showMessageDialog(frame, "You selected: " + selectedField);
-            try {
-                selectionQueue.put(selectedField);
-            } catch (InterruptedException ex) {
-                System.out.println("Exception in gui....");
-                System.exit(1);
+            boolean isIndexInitialized = isFolderNotEmpty(config.getIndexFolderPath());
+            if (isIndexInitialized) {
+                JOptionPane.showMessageDialog(frame, "Index already initialized, first clean the current one");
+                return;
             }
+            selectedField = (String) fieldComboBox.getSelectedItem();
+            Manager.createIndex(config.getNumberOfThreads(), selectedField, config.getFolderPath(), config.getNumberOfIndexFiles(), config.getIndexFolderPath());
         });
 
         queryButton.addActionListener(e -> {
-            userInput = userInputField.getText();
-            try {
-                selectionQueue.put("QUERY"+userInput);
-            } catch (InterruptedException ex) {
-                System.exit(1);
+            boolean isIndexInitialized = isFolderNotEmpty(config.getIndexFolderPath());
+            String selectedValue = userInputField.getText();
+            if (!isIndexInitialized){
+                JOptionPane.showMessageDialog(frame, "Index is not initialized");
+                return;
             }
+            JOptionPane.showMessageDialog(frame, "Running query: " + "SELECT * FROM Customers WHERE " + selectedField + " = " + selectedValue);
+            List<Customer> customers =  Manager.runIndex(selectedField, selectedValue, config.getIndexFolderPath());
+            String customersUI = utils.getCustomersString(customers);
+            JOptionPane.showMessageDialog(frame, customersUI);
         });
 
         deleteIndexButton.addActionListener(e -> {
-            try {
-                selectionQueue.put("CLEANTHEINDEXES");
-            } catch (InterruptedException ex) {
-                System.exit(1);
-            }
+            JOptionPane.showMessageDialog(frame, "Cleaning index dir");
+            Manager.cleanIndexDirectory(config.getIndexFolderPath());
         });
 
         frame.setLocationRelativeTo(null);

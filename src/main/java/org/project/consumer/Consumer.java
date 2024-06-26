@@ -1,6 +1,6 @@
 package org.project.consumer;
 
-import org.project.costumer.Customer;
+import org.project.customer.Customer;
 import org.project.index.Index;
 
 import java.lang.reflect.Field;
